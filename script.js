@@ -182,47 +182,16 @@
   }
 
   form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
     if (!validateForm()) {
+      e.preventDefault();
       var firstError = document.querySelector('.form-row .error, .form-row input.error, .form-row textarea.error');
       if (firstError) {
         firstError.closest('.form-row')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
       return;
     }
-
     setSubmitting(true);
-
-    var formData = new FormData(form);
-    var payload = {};
-    formData.forEach(function (value, key) {
-      payload[key] = value;
-    });
-
-    fetch(form.action, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(function (res) {
-      if (!res.ok) throw new Error('送信に失敗しました');
-      return res.json();
-    })
-    .then(function () {
-      document.getElementById('success-modal').classList.remove('hidden');
-      form.reset();
-      requiredFields.forEach(function (item) {
-        clearError(item.id, item.errorId);
-      });
-    })
-    .catch(function (err) {
-      alert('送信に失敗しました。しばらく経ってからお試しください。');
-      console.error(err);
-    })
-    .finally(function () {
-      setSubmitting(false);
-    });
+    // 通常のPOST送信（FormSubmitでメール送信後、_nextにリダイレクト）
   });
 
   requiredFields.forEach(function (item) {
@@ -247,6 +216,15 @@
 // ===== Modal =====
 function closeModal() {
   document.getElementById('success-modal').classList.add('hidden');
+  if (typeof history !== 'undefined' && history.replaceState) {
+    history.replaceState(null, '', window.location.pathname);
+  }
+}
+
+// 送信後のリダイレクトで戻ってきたときに完了モーダルを表示
+if (window.location.search.indexOf('sent=1') !== -1) {
+  var modal = document.getElementById('success-modal');
+  if (modal) modal.classList.remove('hidden');
 }
 
 document.getElementById('success-modal')?.addEventListener('click', function (e) {
