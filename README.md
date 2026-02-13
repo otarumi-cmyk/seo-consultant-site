@@ -2,6 +2,10 @@
 
 SEOコンサルティングサービスのランディングページとお問い合わせフォームです。
 
+## 公開URL
+
+**https://otarumi-cmyk.github.io/seo-consultant-site/**
+
 ## 構成
 
 - `index.html` - メインHTML（ヒーロー、サービス紹介、特徴、問い合わせフォーム）
